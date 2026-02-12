@@ -2,6 +2,60 @@
 
 All notable changes to this project will be documented in this file.
 
+<a name="v2.2.0"></a>
+
+## [v2.2.0 - Hide Editor and Electron 39](https://github.com/lvcabral/brs-desktop/releases/tag/v2.2.0) - 11 Feb 2026
+
+This release includes several improvements and bug fixes to the BrightScript Simulator. It upgrades Electron to v39, bringing performance enhancements and security updates. Additionally, it introduces a new feature that allows users to hide or show the editor panel manually, providing a more flexible workspace. The `brs-engine` dependency is also upgraded to v2.1.0 with RSG extension, which includes various fixes and improvements to the BrightScript language and SceneGraph support.
+
+![brs-desktop-hide-editor](https://github.com/user-attachments/assets/6bc4baaf-913f-4bca-8e54-00e6f460d170)
+
+* Upgraded Electron to v39 by [@lvcabral](https://github.com/lvcabral) in [#241](https://github.com/lvcabral/brs-desktop/pull/241)
+* Changed the Editor/Console window to allow user to hide/show the editor panel manually by [@lvcabral](https://github.com/lvcabral) in [#242](https://github.com/lvcabral/brs-desktop/pull/242)
+* Upgraded `brs-engine` to v2.1.0  (with RSG extension), main changes were:
+  * (brs) Fixed MicroDebugger stack trace and context (variables)
+  * (brs) Properly handle crash during debugger session
+  * (brs) Properly handle files with `UTF-8 BOM` on `Lexer`
+  * (brs) Implemented DRM detection in browser environment to populate `roDeviceInfo.getDrmInfoEx()`
+  * (brs) Fix video URL handling to correctly process package video files
+  * (brs) Added support for the `milliseconds` param on `roDateTime.toISOString()`
+  * (brs) Allowed to use `global` as function parameter name
+  * (brs) Add LongInteger (Int64) support to Str() global function
+  * Changes on `brs-scenegraph` package (release v0.1.0):
+    * (rsg) Implement thread updates similar to SceneGraph Rendezvous
+    * (rsg) Fixed `Scenegraph` crash handling and stack trace
+    * (rsg) Implemented support for debugging Task threads
+    * (rsg) Added `PosterGrid` and improved focus style handling on `ArrayGrid` based nodes
+    * (rsg) Fixed `ScrollingLabel` to handle `horizAlign` and actually scroll when needed
+    * (rsg) Added `InfoPane` node
+    * (rsg) Fixed the handling of `OK` key in `RowList` and `ZoomRowList`
+    * (rsg) Added `setNodeFocus` method to `ArrayGrid` to reset `itemFocused` when getting the focus
+    * (rsg) Added `sgnodes` command to `MicroDebugger` to list node type statistics
+    * (rsg) Added `MaskGroup` draft and fixed several issues with field assignment
+    * (rsg) Fixed component XML parsing of `interface` to handle attributes as case-insensitive
+    * (rsg) Improved parsing of field types: `StringArray`, `Vector2D` and `Vector2DArray`
+    * (rsg) Fixed XML parsing to support `alias` field to be set without `type`
+    * (rsg) Added support for default item component on `RowList` and item focus callback in `ArrayGrid`
+    * (rsg) Implemented all `PanelSet` related nodes
+    * (rsg) Fixed `role` fields to not be case sensitive
+    * (rsg) Implemented the context expansion for the Main thread
+    * (rsg) Allowed replacing hidden fields when extending `ContentNode`
+    * (rsg) Prevent issues with `Video` node on startup (after the Splash)
+    * (rsg) Improved handling of manifest entries `ui_resolutions` and `uri_resolution_autosub`
+    * (rsg) Fixed crash when `m.top.getScene()` is used on `init()` in a `Task` thread
+    * (rsg) Implemented `ancestorBoundingRect()` method
+    * (rsg) Added support for multiple `Node` field aliases (CSV)
+    * (rsg) Fixed `Node.setValue()` signature to prevent field creation on assignment
+    * (rsg) Fixed item component handling to not fail when fields are not defined in XML
+    * (rsg) Fixed `Node` field aliases observer trigger
+    * (rsg) Fixed `Poster`, `BusySpinner`, `Video` and `TrickPlayBar` to properly handle child nodes `uri` update
+    * (rsg) Fixed `BusySpinner` dimensions calculation
+    * (rsg) Fixed circular dependency issue when `Node` has child with its same `id` in `alias`
+    * (rsg) Fixed `StandardDialog` focus and `back` key press handling
+    * (rsg) Fixed observables serialization and handling of `InfoFields`
+
+Full Changelog: [v2.2.0]
+
 <a name="v2.1.3"></a>
 
 ## [v2.1.3 - Animation and Interpolator Nodes](https://github.com/lvcabral/brs-desktop/releases/tag/v2.1.3) - 06 Jan 2026
@@ -612,6 +666,7 @@ Binaries are published at the engine library repository: <https://github.com/lvc
 
 [Changes][v0.5.0-app]
 
+[v2.2.0]: https://github.com/lvcabral/brs-desktop/compare/v2.1.3...v2.2.0
 [v2.1.3]: https://github.com/lvcabral/brs-desktop/compare/v2.1.2...v2.1.3
 [v2.1.2]: https://github.com/lvcabral/brs-desktop/compare/v2.1.1...v2.1.2
 [v2.1.1]: https://github.com/lvcabral/brs-desktop/compare/v2.1.0...v2.1.1
