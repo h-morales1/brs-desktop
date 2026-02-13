@@ -7,10 +7,11 @@
  *--------------------------------------------------------------------------------------------*/
 import path from "node:path";
 import url from "node:url";
+import fs from "node:fs";
 import dns from "node:dns";
 import minimist from "minimist";
 import jetpack from "fs-jetpack";
-import { app, screen, BrowserWindow, session } from "electron";
+import { app, screen, BrowserWindow, session, protocol, net } from "electron";
 import { DateTime } from "luxon";
 import { setPassword, setPort, enableInstaller } from "./server/installer";
 import { initECP, enableECP } from "./server/ecp";
@@ -55,6 +56,19 @@ import { setupTitlebar, attachTitlebarToWindow } from "custom-electron-titlebar/
 const isMacOS = process.platform === "darwin";
 
 require("@electron/remote/main").initialize();
+
+// Register custom protocol for Worker compatibility (file:// Workers broken in Electron 39+)
+protocol.registerSchemesAsPrivileged([{
+    scheme: "brs-local",
+    privileges: {
+        standard: true,
+        secure: true,
+        supportFetchAPI: true,
+        corsEnabled: true,
+        stream: true,
+        codeCache: true,
+    },
+}]);
 
 // Device Information Object
 const dt = DateTime.now().setZone("system");
@@ -159,6 +173,25 @@ app.on("ready", () => {
         deviceInfo: deviceInfo,
     };
     updateAppList();
+    // Handle brs-local:// protocol for Worker compatibility (file:// Workers broken in Electron 39+)
+    // URL parsing treats first path segment as hostname (brs-local:///home/x → host='home', path='/x')
+    // so we reconstruct the full filesystem path from both parts
+    protocol.handle("brs-local", (request) => {
+        const reqUrl = new URL(request.url);
+        const filePath = reqUrl.hostname
+            ? "/" + reqUrl.hostname + decodeURIComponent(reqUrl.pathname)
+            : decodeURIComponent(reqUrl.pathname);
+        console.log("[PROTOCOL] Serving:", filePath);
+        const data = fs.readFileSync(filePath);
+        return new Response(data, {
+            headers: {
+                "Content-Type": "text/javascript",
+                "Cross-Origin-Opener-Policy": "same-origin",
+                "Cross-Origin-Embedder-Policy": "require-corp",
+                "Cross-Origin-Resource-Policy": "cross-origin",
+            },
+        });
+    });
     // Add CORS headers to enable SharedArrayBuffer and cross-origin requests
     session.defaultSession.webRequest.onHeadersReceived((details, callback) => {
         details.responseHeaders["Cross-Origin-Opener-Policy"] = ["same-origin"];
