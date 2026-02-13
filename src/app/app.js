@@ -153,7 +153,7 @@ async function main() {
     });
 
     await brs.initialize(customDeviceInfo, {
-        debugToConsole: false,
+        debugToConsole: true,
         showStats: false,
         customKeys: customKeys,
     });
@@ -184,7 +184,8 @@ function getExtensionPath(lib) {
     const scripts = document.getElementsByTagName("script");
     for (const script of scripts) {
         if (script.src.endsWith("brs.api.js")) {
-            return script.src.replace("brs.api.js", lib);
+            // Use brs-local:// protocol so importScripts works inside Workers
+            return script.src.replace("brs.api.js", lib).replace("file://", "brs-local://");
         }
     }
     return `./${lib}`;
