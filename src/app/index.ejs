@@ -105,6 +105,19 @@
             </div>
         </div>
 
+        <script>
+            // Patch Worker constructor: file:// Workers broken in Electron 39+, use brs-local:// custom protocol
+            (function() {
+                var OrigWorker = globalThis.Worker;
+                globalThis.Worker = function(url, opts) {
+                    if (typeof url === "string" && url.startsWith("file://")) {
+                        url = url.replace("file://", "brs-local://");
+                    }
+                    return new OrigWorker(url, opts);
+                };
+                globalThis.Worker.prototype = OrigWorker.prototype;
+            })();
+        </script>
         <script src="./lib/<%= brsApi %>"></script>
         <script src="../node_modules/toastify-js/src/toastify.js"></script>
     </body>
